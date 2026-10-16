@@ -1,1 +1,1 @@
-# kubernetes-network-policy-security-simulation
+# k8s-network-security
