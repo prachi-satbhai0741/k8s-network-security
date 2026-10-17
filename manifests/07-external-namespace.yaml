@@ -1,0 +1,55 @@
+# A second namespace that carries no NetworkPolicies. It provides:
+#   - external-client:  a pod used to test cross-namespace ingress to the backend
+#   - external-service: a target used to test egress restrictions on the frontend
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: network-security-external
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: external-service
+  namespace: network-security-external
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: external-service
+  template:
+    metadata:
+      labels:
+        app: external-service
+    spec:
+      containers:
+        - name: external-service
+          image: nginx:1.27-alpine
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: external-service
+  namespace: network-security-external
+spec:
+  selector:
+    app: external-service
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: external-client
+  namespace: network-security-external
+  labels:
+    app: external-client
+spec:
+  containers:
+    - name: external-client
+      image: busybox:1.36
+      command: ["sh", "-c", "sleep 3600"]

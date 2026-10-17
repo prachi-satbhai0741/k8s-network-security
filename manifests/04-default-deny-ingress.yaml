@@ -1,0 +1,11 @@
+# Default-deny: selects every pod in the namespace and allows no ingress traffic.
+# Specific allow rules are layered on top in 05-allow-frontend-to-backend.yaml.
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: default-deny-ingress
+  namespace: network-security-demo
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
